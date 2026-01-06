@@ -187,8 +187,7 @@ function renderCard() {
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
   ctx.fillText('ЖАУАПТЫ ТҰЛҒА /', w * hConfig.x, h * hConfig.y);
-  ctx.fillText('ОТВЕТСТВЕННОЕ', w * hConfig.x, h * hConfig.y + headerFontSize * 1.2);
-  ctx.fillText('ЛИЦО', w * hConfig.x, h * hConfig.y + headerFontSize * 2.4);
+  ctx.fillText('ОТВЕТСТВЕННОЕ ЛИЦО', w * hConfig.x, h * hConfig.y + headerFontSize * 1.2);
 
   // 4. Draw responsible person name
   const responsibleName = responsibleNameInput.value.trim();
