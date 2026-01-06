@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OPEN DEPUTY – Генератор флайеров</title>
+  <meta name="description" content="Генератор флайеров для депутатов. Создайте профессиональный бейдж за минуту." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+</head>
+
+<body>
+  <div id="app">
+    <header class="app-header">
+      <h1 class="app-title">
+        <span class="logo-open">OPEN</span>
+        <span class="logo-deputy">DEPUTY</span>
+      </h1>
+      <p class="app-subtitle">Генератор флайеров</p>
+    </header>
+
+    <main class="main-container">
+      <!-- Form Panel -->
+      <section class="form-panel">
+        <h2 class="panel-title">Данные депутата</h2>
+
+        <div class="form-group">
+          <label class="form-label" for="photo-input">Фото депутата</label>
+          <div class="photo-upload" id="photo-upload-area">
+            <input type="file" id="photo-input" accept="image/jpeg,image/png" hidden />
+            <div class="photo-preview" id="photo-preview">
+              <svg class="photo-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.5">
+                <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" />
+                <path d="M21 21c0-4.418-4.03-8-9-8s-9 3.582-9 8" />
+              </svg>
+            </div>
+            <span class="photo-upload-text">Нажмите или перетащите фото</span>
+          </div>
+          <!-- Photo controls -->
+          <div class="photo-controls" id="photo-controls" style="display: none;">
+            <p class="photo-hint">🖱️ Перетаскивайте фото мышкой на превью</p>
+            <p class="photo-hint">🔍 Колёсико мыши — масштаб</p>
+            <button type="button" id="reset-photo-btn" class="reset-btn">Сбросить позицию</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="deputy-name">ФИО Депутата</label>
+          <input type="text" id="deputy-name" class="form-input" placeholder="Асанов Берик" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="responsible-name">ФИО Ответственного лица</label>
+          <input type="text" id="responsible-name" class="form-input" placeholder="Серикова Алия" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="phone">Телефон</label>
+          <input type="tel" id="phone" class="form-input" placeholder="+7 (___) ___-__-__" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="qr-url">Ссылка для QR-кода</label>
+          <input type="url" id="qr-url" class="form-input" placeholder="https://wa.me/77001234567" />
+        </div>
+
+        <button type="button" id="download-btn" class="download-btn">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+          </svg>
+          Скачать макет (PDF)
+        </button>
+      </section>
+
+      <!-- Preview Panel -->
+      <section class="preview-panel">
+        <h2 class="panel-title">Предпросмотр</h2>
+        <div class="preview-wrapper">
+          <canvas id="card-canvas"></canvas>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
