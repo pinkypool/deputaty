@@ -8,7 +8,7 @@
   <meta name="description" content="Генератор флайеров для депутатов. Создайте профессиональный бейдж за минуту." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
 </head>
@@ -67,6 +67,157 @@
         <div class="form-group">
           <label class="form-label" for="qr-url">Ссылка для QR-кода</label>
           <input type="url" id="qr-url" class="form-input" placeholder="https://wa.me/77001234567" />
+        </div>
+
+        <!-- Visual Settings -->
+        <div class="settings-section">
+          <h3 class="settings-title">Настройки макета</h3>
+          
+          <!-- Photo Settings -->
+          <div class="settings-group">
+            <h4 class="settings-subtitle">Фото</h4>
+            <div class="control-row">
+              <label>Форма:</label>
+              <select id="photo-shape" class="form-input form-select">
+                <option value="roundRect">Квадрат (скругл.)</option>
+                <option value="circle">Круг</option>
+                <option value="square">Квадрат</option>
+              </select>
+            </div>
+            <div class="control-row">
+              <label>Размер:</label>
+              <input type="range" id="photo-scale-input" min="0.5" max="2" step="0.05" value="1">
+            </div>
+            <div class="control-row">
+              <label>Позиция X:</label>
+              <input type="range" id="photo-x-input" min="0" max="1" step="0.01" value="0.35">
+            </div>
+            <div class="control-row">
+              <label>Позиция Y:</label>
+              <input type="range" id="photo-y-input" min="0" max="1" step="0.01" value="0.43">
+            </div>
+          </div>
+
+          <!-- Deputy Name Settings -->
+          <div class="settings-group">
+            <h4 class="settings-subtitle">Имя депутата</h4>
+            <div class="control-row">
+              <label>Позиция Y:</label>
+              <input type="range" id="deputy-y-input" min="0" max="1" step="0.01" value="0.8">
+            </div>
+            <div class="control-row">
+              <label>Размер:</label>
+              <input type="range" id="deputy-size-input" min="0.02" max="0.1" step="0.001" value="0.06">
+            </div>
+            <div class="control-row">
+              <label>Вес:</label>
+              <select id="deputy-weight-input" class="form-input form-select">
+                <option value="400">Thin (400)</option>
+                <option value="500">Regular (500)</option>
+                <option value="600">Semi-Bold (600)</option>
+                <option value="700" selected>Bold (700)</option>
+                <option value="900">Black (900)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Static Text Settings -->
+          <div class="settings-group">
+            <h4 class="settings-subtitle">Надпись "Ваш депутат"</h4>
+            <div class="control-row">
+              <label>Позиция Y:</label>
+              <input type="number" id="static-y-input" class="form-input" value="205">
+            </div>
+            <div class="control-row">
+              <label>Размер:</label>
+              <input type="range" id="static-size-input" min="0.01" max="0.05" step="0.001" value="0.025">
+            </div>
+            <div class="control-row">
+              <label>Вес:</label>
+              <select id="static-weight-input" class="form-input form-select">
+                <option value="300">Light (300)</option>
+                <option value="400" selected>Regular (400)</option>
+                <option value="600">Semi-Bold (600)</option>
+                <option value="700">Bold (700)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Responsible Person Settings -->
+          <div class="settings-group">
+            <h4 class="settings-subtitle">Ответственное лицо</h4>
+            
+            <div class="control-subgroup">
+              <label class="subgroup-label">Заголовок</label>
+              <div class="control-row">
+                <label>Позиция X:</label>
+                <input type="range" id="resp-header-x" min="0" max="1" step="0.01" value="0.03">
+              </div>
+              <div class="control-row">
+                <label>Позиция Y:</label>
+                <input type="range" id="resp-header-y" min="0" max="1" step="0.01" value="0.86">
+              </div>
+              <div class="control-row">
+                <label>Размер:</label>
+                <input type="range" id="resp-header-size" min="0.01" max="0.05" step="0.001" value="0.025">
+              </div>
+              <div class="control-row">
+                <label>Вес:</label>
+                <select id="resp-header-weight" class="form-input form-select">
+                  <option value="400">Regular</option>
+                  <option value="700" selected>Bold</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="control-subgroup">
+              <label class="subgroup-label">Имя</label>
+              <div class="control-row">
+                <label>Позиция X:</label>
+                <input type="range" id="resp-name-x" min="0" max="1" step="0.01" value="0.03">
+              </div>
+              <div class="control-row">
+                <label>Позиция Y:</label>
+                <input type="range" id="resp-name-y" min="0" max="1" step="0.01" value="0.90">
+              </div>
+              <div class="control-row">
+                <label>Размер:</label>
+                <input type="range" id="resp-name-size" min="0.01" max="0.05" step="0.001" value="0.02">
+              </div>
+              <div class="control-row">
+                <label>Вес:</label>
+                <select id="resp-name-weight" class="form-input form-select">
+                  <option value="400">Regular</option>
+                  <option value="600">Semi-Bold</option>
+                  <option value="700" selected>Bold</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="control-subgroup">
+              <label class="subgroup-label">Телефон</label>
+              <div class="control-row">
+                <label>Позиция X:</label>
+                <input type="range" id="resp-phone-x" min="0" max="1" step="0.01" value="0.03">
+              </div>
+              <div class="control-row">
+                <label>Позиция Y:</label>
+                <input type="range" id="resp-phone-y" min="0" max="1" step="0.01" value="0.94">
+              </div>
+              <div class="control-row">
+                <label>Размер:</label>
+                <input type="range" id="resp-phone-size" min="0.01" max="0.05" step="0.001" value="0.02">
+              </div>
+              <div class="control-row">
+                <label>Вес:</label>
+                <select id="resp-phone-weight" class="form-input form-select">
+                  <option value="400">Regular</option>
+                  <option value="500" selected>Medium</option>
+                  <option value="700">Bold</option>
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
 
         <button type="button" id="download-btn" class="download-btn">

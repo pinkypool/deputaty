@@ -11,53 +11,55 @@ const CONFIG = {
   templateWidth: 0,
   templateHeight: 0,
 
-  // Photo circle - center of the circular frame
+  // Photo - в золотой рамке слева
   photo: {
-    centerX: 0.5,     // Slightly left of center
-    centerY: 0.35,     // Upper half
-    radius: 0.15       // Radius of the photo circle
+    centerX: 0.35,       // Левая сторона
+    centerY: 0.43,       // Чуть выше центра
+    radius: 0.17         // Размер фото в рамке
   },
 
-  // Deputy name position (below photo, centered)
+  // Deputy name - ФАМИЛИЯ + ИМЯ ОТЧЕСТВО под фото слева
   deputyName: {
-    x: 0.5,           // Same as photo center
-    y: 0.715,           // Below the circle
-    fontSize: 0.04,
+    x: 0.15,             // Слева
+    y: 0.65,             // Под фото
+    fontSize: 0.06,
     fontWeight: '700',
-    color: '#002855'
+    color: '#FFFFFF'     // Белый цвет
   },
 
-  // Left side block - Responsible person
+
+  // Ответственное лицо - блок внизу
   responsible: {
-    // Fixed header "ЖАУАПТЫ ТҰЛҒА / ОТВЕТСТВЕННОЕ ЛИЦО"
+    // Заголовок "Жауапты тұлға | Ответственное лицо"
     header: {
-      x: 0.04,
-      y: 0.2,
-      fontSize: 0.02,
-      color: '#002855',
+      x: 0.03,
+      y: 0.86,
+      fontSize: 0.025,
+      color: '#C9A227',
       fontWeight: '700'
     },
-    // Name below header
+    // Имя ответственного
     name: {
-      x: 0.04,
-      y: 0.32,
+      x: 0.03,
+      y: 0.90,
       fontSize: 0.02,
-      color: '#374151'
+      color: '#FFFFFF',
+      fontWeight: '700'
     },
-    // Phone
+    // Телефон ответственного
     phone: {
-      x: 0.04,
-      y: 0.4,
+      x: 0.03,
+      y: 0.94,
       fontSize: 0.02,
-      color: '#4b5563'
+      color: '#FFFFFF'
     }
   },
 
-  // QR code position (right side)
+  // QR code - внутри телефона справа
   qr: {
-    x: 0.75,           // Right area
-    y: 0.2,           // Top
-    size: 0.21         // QR size
+    x: 0.695,            // В экране телефона
+    y: 0.215,            // Верхняя часть экрана
+    size: 0.18           // Размер QR
   }
 };
 
@@ -77,10 +79,63 @@ const downloadBtn = document.getElementById('download-btn');
 const canvas = document.getElementById('card-canvas');
 const ctx = canvas.getContext('2d');
 
+// Settings Elements
+const photoShapeSelect = document.getElementById('photo-shape');
+const photoScaleInput = document.getElementById('photo-scale-input');
+const photoXInput = document.getElementById('photo-x-input');
+const photoYInput = document.getElementById('photo-y-input');
+const deputyYInput = document.getElementById('deputy-y-input');
+const deputySizeInput = document.getElementById('deputy-size-input');
+const deputyWeightInput = document.getElementById('deputy-weight-input');
+const staticYInput = document.getElementById('static-y-input');
+const staticSizeInput = document.getElementById('static-size-input');
+const staticWeightInput = document.getElementById('static-weight-input');
+
+// Responsible Person Inputs
+const respHeaderX = document.getElementById('resp-header-x');
+const respHeaderY = document.getElementById('resp-header-y');
+const respHeaderSize = document.getElementById('resp-header-size');
+const respHeaderWeight = document.getElementById('resp-header-weight');
+
+const respNameX = document.getElementById('resp-name-x');
+const respNameY = document.getElementById('resp-name-y');
+const respNameSize = document.getElementById('resp-name-size');
+const respNameWeight = document.getElementById('resp-name-weight');
+
+const respPhoneX = document.getElementById('resp-phone-x');
+const respPhoneY = document.getElementById('resp-phone-y');
+const respPhoneSize = document.getElementById('resp-phone-size');
+const respPhoneWeight = document.getElementById('resp-phone-weight');
+
 // State
 let templateImage = null;
+let template2Image = null;  // Новый шаблон (шаблон.png)
+let nadpisImage = null;     // Надпись (надпись.png)
 let userPhoto = null;
 let qrDataUrl = null;
+
+// Позиции для двигания (настройте под себя)
+// Позиции для двигания (настройте под себя)
+const OVERLAY_CONFIG = {
+  template2: {
+    x: 0,       // позиция X (в пикселях от левого края)
+    y: 0,       // позиция Y (в пикселях от верхнего края)
+    width: 0,   // 0 = оригинальный размер
+    height: 0
+  },
+  nadpis: {
+    x: 30,       // позиция X
+    y: 50,       // позиция Y  
+    width: 600,   // 0 = оригинальный размер
+    height: 1000
+  },
+  staticText: {
+    y: 205,       // Позиция Y для текста "Ваш депутат"
+    fontSize: 0.025,
+    fontWeight: '400'
+  },
+  photoShape: 'roundRect' // 'circle', 'square', 'roundRect'
+};
 
 // Photo transform state
 let photoScale = 1;
@@ -118,8 +173,37 @@ async function loadTemplate() {
       resolve(img);
     };
     img.onerror = reject;
-    img.src = '/template.jpg';
+    img.src = '/template2.png';
   });
+}
+
+// ===========================================
+// Load Additional Images (template2 + nadpis)
+// ===========================================
+async function loadAdditionalImages() {
+  // Загрузка template2.png
+  const template2Promise = new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      template2Image = img;
+      resolve(img);
+    };
+    img.onerror = () => resolve(null);
+    img.src = '/template2.png';
+  });
+
+  // Загрузка nadpis.png
+  const nadpisPromise = new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      nadpisImage = img;
+      resolve(img);
+    };
+    img.onerror = () => resolve(null);
+    img.src = '/nadpis.png';
+  });
+
+  await Promise.all([template2Promise, nadpisPromise]);
 }
 
 // ===========================================
@@ -145,29 +229,91 @@ function renderCard() {
   // 1. Draw template background
   ctx.drawImage(templateImage, 0, 0);
 
-  // 2. Draw user photo (circular, clipped, with scale/offset)
-  if (userPhoto) {
+  // 1.5. Draw nadpis overlay (если загружен)
+  if (nadpisImage) {
+    const cfg = OVERLAY_CONFIG.nadpis;
+    const aspectRatio = nadpisImage.width / nadpisImage.height;
+    
+    let drawW, drawH;
+    if (cfg.width && cfg.height) {
+      // Если заданы оба - используем width и считаем height по пропорции
+      drawW = cfg.width;
+      drawH = cfg.width / aspectRatio;
+    } else if (cfg.width) {
+      // Только width - считаем height
+      drawW = cfg.width;
+      drawH = cfg.width / aspectRatio;
+    } else if (cfg.height) {
+      // Только height - считаем width
+      drawH = cfg.height;
+      drawW = cfg.height * aspectRatio;
+    } else {
+      // Оригинальный размер
+      drawW = nadpisImage.width;
+      drawH = nadpisImage.height;
+    }
+    
+    // Центрируем nadpis по X относительно фото
     const photoConfig = CONFIG.photo;
-    const centerX = w * photoConfig.centerX;
-    const centerY = h * photoConfig.centerY;
-    const radius = w * photoConfig.radius;
+    const photoCenterX = w * photoConfig.centerX;
+    const nadpisX = photoCenterX - drawW / 2;
+    
+    // Y берем из конфига (ручное управление)
+    const nadpisY = cfg.y;
 
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.clip();
+    ctx.drawImage(nadpisImage, nadpisX, nadpisY, drawW, drawH);
+    
+    // Статичная надпись под nadpis
+    const staticCfg = OVERLAY_CONFIG.staticText;
+    const subtitleFontSize = Math.round(w * (staticCfg.fontSize || 0.022));
+    const fontWeight = staticCfg.fontWeight || '400';
+    
+    ctx.font = `${fontWeight} ${subtitleFontSize}px Montserrat, sans-serif`;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.textAlign = 'center'; // Центрируем текст
+    ctx.textBaseline = 'top';
+    
+    // Текст рисуем по Y из конфига
+    ctx.fillText('Сіздің депутатыңыз | Ваш депутат', photoCenterX, staticCfg.y);
+  }
 
+  // 2. Draw user photo (или заглушка)
+  const photoConfig = CONFIG.photo;
+  const centerX = w * photoConfig.centerX;
+  const centerY = h * photoConfig.centerY;
+  const size = w * photoConfig.radius * 2;  // Размер квадрата
+  const borderRadius = size * 0.08;  // Радиус скругления углов
+
+  const x = centerX - size / 2;
+  const y = centerY - size / 2;
+
+  ctx.save();
+  ctx.beginPath();
+  
+  // Форма фото
+  if (OVERLAY_CONFIG.photoShape === 'circle') {
+    ctx.arc(centerX, centerY, size / 2, 0, Math.PI * 2);
+  } else if (OVERLAY_CONFIG.photoShape === 'square') {
+    ctx.rect(x, y, size, size);
+  } else {
+    // roundRect (default)
+    ctx.roundRect(x, y, size, size, borderRadius);
+  }
+  
+  ctx.closePath();
+  ctx.clip();
+
+  if (userPhoto) {
     // Calculate photo dimensions
     const imgRatio = userPhoto.width / userPhoto.height;
     let drawWidth, drawHeight;
 
-    // Cover mode - fill the circle, then apply scale
+    // Cover mode - fill the square, then apply scale
     if (imgRatio > 1) {
-      drawHeight = radius * 2 * photoScale;
+      drawHeight = size * photoScale;
       drawWidth = drawHeight * imgRatio;
     } else {
-      drawWidth = radius * 2 * photoScale;
+      drawWidth = size * photoScale;
       drawHeight = drawWidth / imgRatio;
     }
 
@@ -176,75 +322,103 @@ function renderCard() {
     const offsetY = centerY - drawHeight / 2 + photoOffsetY;
 
     ctx.drawImage(userPhoto, offsetX, offsetY, drawWidth, drawHeight);
-    ctx.restore();
+  } else {
+    // ЗАГЛУШКА (Placeholder)
+    ctx.fillStyle = '#e5e7eb'; // Серый фон
+    ctx.fill();
+    
+    // Силуэт
+    ctx.fillStyle = '#9ca3af'; // Темно-серый силуэт
+    const iconSize = size * 0.5;
+    ctx.translate(centerX - iconSize/2, centerY - iconSize/2);
+    const scale = iconSize / 24;
+    ctx.scale(scale, scale);
+    const path = new Path2D("M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z");
+    ctx.fill(path);
+  }
+  ctx.restore();
+
+  // 3. Draw deputy name - ФАМИЛИЯ + ИМЯ ОТЧЕСТВО (по центру под фото)
+  // Если пусто, используем заглушку
+  const deputyName = deputyNameInput.value.trim() || 'АСАНОВ БЕРИК';
+  const isPlaceholder = !deputyNameInput.value.trim();
+
+  if (deputyName) {
+    const nameConfig = CONFIG.deputyName;
+    const photoConfig = CONFIG.photo;
+    const fontSize = Math.round(w * nameConfig.fontSize);
+    
+    // Используем centerX от фото для центрирования по X
+    const photoCenterX = w * photoConfig.centerX;
+    
+    // Y берем из конфига (ручное управление)
+    const nameY = h * nameConfig.y;
+
+    ctx.fillStyle = isPlaceholder ? 'rgba(255, 255, 255, 0.5)' : nameConfig.color;
+    ctx.textAlign = 'center';  // Центрируем по горизонтали
+    ctx.textBaseline = 'top';
+
+    // Разбиваем: первое слово = фамилия, остальное = имя отчество
+    const parts = deputyName.split(' ');
+    if (parts.length >= 2) {
+      const lastName = parts[0];  // Фамилия
+      const firstName = parts.slice(1).join(' ');  // Имя Отчество
+
+      // Фамилия (крупнее, жирнее) - используем выбранный вес или 700
+      const weight = nameConfig.fontWeight || '700';
+      ctx.font = `${weight} ${fontSize}px "Playfair Display", serif`;
+      ctx.fillText(lastName, photoCenterX, nameY);
+
+      // Имя Отчество (чуть меньше)
+      ctx.font = `500 ${Math.round(fontSize * 0.7)}px "Playfair Display", serif`;
+      ctx.fillText(firstName, photoCenterX, nameY + fontSize * 1.2);
+    } else {
+      const weight = nameConfig.fontWeight || '700';
+      ctx.font = `${weight} ${fontSize}px "Playfair Display", serif`;
+      ctx.fillText(deputyName, photoCenterX, nameY);
+    }
   }
 
-  // 3. Draw fixed header "ЖАУАПТЫ ТҰЛҒА / ОТВЕТСТВЕННОЕ ЛИЦО"
+  // 4. Draw responsible person header (статичный темно-синий)
   const hConfig = CONFIG.responsible.header;
   const headerFontSize = Math.round(w * hConfig.fontSize);
-  ctx.font = `${hConfig.fontWeight} ${headerFontSize}px Inter, sans-serif`;
-  ctx.fillStyle = hConfig.color;
+  ctx.font = `${hConfig.fontWeight} ${headerFontSize}px Montserrat, sans-serif`;
+  ctx.fillStyle = '#002855';  // Темно-синий статичный
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
-  ctx.fillText('ЖАУАПТЫ ТҰЛҒА /', w * hConfig.x, h * hConfig.y);
-  ctx.fillText('ОТВЕТСТВЕННОЕ ЛИЦО', w * hConfig.x, h * hConfig.y + headerFontSize * 1.2);
+  ctx.fillText('Жауапты тұлға | Ответственное лицо', w * hConfig.x, h * hConfig.y);
 
-  // 4. Draw responsible person name
-  const responsibleName = responsibleNameInput.value.trim();
+  // 5. Draw responsible person name
+  const responsibleName = responsibleNameInput.value.trim() || 'Серикова Алия';
+  const isRespPlaceholder = !responsibleNameInput.value.trim();
+  
   if (responsibleName) {
     const rConfig = CONFIG.responsible.name;
     const fontSize = Math.round(w * rConfig.fontSize);
 
-    ctx.font = `400 ${fontSize}px Inter, sans-serif`;
-    ctx.fillStyle = rConfig.color;
+    ctx.font = `${rConfig.fontWeight} ${fontSize}px Montserrat, sans-serif`;
+    ctx.fillStyle = isRespPlaceholder ? 'rgba(255, 255, 255, 0.5)' : rConfig.color;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-
-    ctx.fillText('Аты-жөні /', w * rConfig.x, h * rConfig.y);
-    ctx.fillText(responsibleName, w * rConfig.x, h * rConfig.y + fontSize * 1.3);
+    ctx.fillText(responsibleName, w * rConfig.x, h * rConfig.y);
   }
 
-  // 5. Draw phone
-  const phone = phoneInput.value.trim();
-  if (phone) {
+  // Телефон ответственного лица (просто текст)
+  const respPhone = phoneInput.value.trim() || '+7 (700) 123-45-67';
+  const isPhonePlaceholder = !phoneInput.value.trim();
+
+  if (respPhone) {
     const pConfig = CONFIG.responsible.phone;
     const fontSize = Math.round(w * pConfig.fontSize);
+    const phoneX = w * pConfig.x;
+    const phoneY = h * pConfig.y;
 
-    ctx.font = `400 ${fontSize}px Inter, sans-serif`;
-    ctx.fillStyle = pConfig.color;
+    // Текст номера
+    ctx.font = `${pConfig.fontWeight || '500'} ${fontSize}px Montserrat, sans-serif`;
+    ctx.fillStyle = isPhonePlaceholder ? 'rgba(255, 255, 255, 0.5)' : pConfig.color;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-
-    ctx.fillText(`Тел.: ${phone}`, w * pConfig.x, h * pConfig.y);
-  }
-
-  // 6. Draw deputy name (centered below photo)
-  const deputyName = deputyNameInput.value.trim();
-  if (deputyName) {
-    const nameConfig = CONFIG.deputyName;
-    const fontSize = Math.round(w * nameConfig.fontSize);
-
-    ctx.fillStyle = nameConfig.color;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    // Split into two lines (first name + last name)
-    const parts = deputyName.split(' ');
-    if (parts.length >= 2) {
-      const firstName = parts.slice(0, -1).join(' ');
-      const lastName = parts[parts.length - 1];
-
-      // First name (smaller)
-      ctx.font = `600 ${Math.round(fontSize * 0.85)}px Inter, sans-serif`;
-      ctx.fillText(firstName.toUpperCase(), w * nameConfig.x, h * nameConfig.y - fontSize * 0.7);
-
-      // Last name (larger, bolder)
-      ctx.font = `900 ${fontSize}px Inter, sans-serif`;
-      ctx.fillText(lastName.toUpperCase(), w * nameConfig.x, h * nameConfig.y + fontSize * 0.5);
-    } else {
-      ctx.font = `${nameConfig.fontWeight} ${fontSize}px Inter, sans-serif`;
-      ctx.fillText(deputyName.toUpperCase(), w * nameConfig.x, h * nameConfig.y);
-    }
+    ctx.fillText(respPhone, phoneX, phoneY);
   }
 
   // 7. Draw QR code
@@ -514,6 +688,7 @@ function exportToPDF() {
 async function init() {
   try {
     await loadTemplate();
+    await loadAdditionalImages();  // Загружаем template2 и nadpis
 
     initPhotoUpload();
     initPhoneMask();
@@ -523,6 +698,70 @@ async function init() {
     deputyNameInput.addEventListener('input', renderCard);
     responsibleNameInput.addEventListener('input', renderCard);
     qrUrlInput.addEventListener('input', () => generateQRCode(qrUrlInput.value.trim()));
+
+    // Settings listeners
+    photoShapeSelect.addEventListener('change', (e) => {
+      OVERLAY_CONFIG.photoShape = e.target.value;
+      renderCard();
+    });
+    
+    photoScaleInput.addEventListener('input', (e) => {
+      CONFIG.photo.radius = 0.17 * parseFloat(e.target.value);
+      renderCard();
+    });
+
+    photoXInput.addEventListener('input', (e) => {
+      CONFIG.photo.centerX = parseFloat(e.target.value);
+      renderCard();
+    });
+
+    photoYInput.addEventListener('input', (e) => {
+      CONFIG.photo.centerY = parseFloat(e.target.value);
+      renderCard();
+    });
+
+    deputyYInput.addEventListener('input', (e) => {
+      CONFIG.deputyName.y = parseFloat(e.target.value);
+      renderCard();
+    });
+
+    deputySizeInput.addEventListener('input', (e) => {
+      CONFIG.deputyName.fontSize = parseFloat(e.target.value);
+      renderCard();
+    });
+
+    staticYInput.addEventListener('input', (e) => {
+      OVERLAY_CONFIG.staticText.y = parseInt(e.target.value);
+      renderCard();
+    });
+
+    deputyWeightInput.addEventListener('change', (e) => {
+      CONFIG.deputyName.fontWeight = e.target.value;
+      renderCard();
+    });
+
+    staticWeightInput.addEventListener('change', (e) => {
+      OVERLAY_CONFIG.staticText.fontWeight = e.target.value;
+      renderCard();
+    });
+
+    // Responsible Header Controls
+    respHeaderX.addEventListener('input', (e) => { CONFIG.responsible.header.x = parseFloat(e.target.value); renderCard(); });
+    respHeaderY.addEventListener('input', (e) => { CONFIG.responsible.header.y = parseFloat(e.target.value); renderCard(); });
+    respHeaderSize.addEventListener('input', (e) => { CONFIG.responsible.header.fontSize = parseFloat(e.target.value); renderCard(); });
+    respHeaderWeight.addEventListener('change', (e) => { CONFIG.responsible.header.fontWeight = e.target.value; renderCard(); });
+
+    // Responsible Name Controls
+    respNameX.addEventListener('input', (e) => { CONFIG.responsible.name.x = parseFloat(e.target.value); renderCard(); });
+    respNameY.addEventListener('input', (e) => { CONFIG.responsible.name.y = parseFloat(e.target.value); renderCard(); });
+    respNameSize.addEventListener('input', (e) => { CONFIG.responsible.name.fontSize = parseFloat(e.target.value); renderCard(); });
+    respNameWeight.addEventListener('change', (e) => { CONFIG.responsible.name.fontWeight = e.target.value; renderCard(); });
+
+    // Responsible Phone Controls
+    respPhoneX.addEventListener('input', (e) => { CONFIG.responsible.phone.x = parseFloat(e.target.value); renderCard(); });
+    respPhoneY.addEventListener('input', (e) => { CONFIG.responsible.phone.y = parseFloat(e.target.value); renderCard(); });
+    respPhoneSize.addEventListener('input', (e) => { CONFIG.responsible.phone.fontSize = parseFloat(e.target.value); renderCard(); });
+    respPhoneWeight.addEventListener('change', (e) => { CONFIG.responsible.phone.fontWeight = e.target.value; renderCard(); });
 
     // Download button
     downloadBtn.addEventListener('click', exportToPDF);

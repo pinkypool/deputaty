@@ -14,7 +14,8 @@
   --gray-500: #6b7280;
   --gray-700: #374151;
   --gray-800: #1f2937;
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Playfair Display', serif;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
@@ -64,6 +65,7 @@ body {
 }
 
 .app-title {
+  font-family: var(--font-heading);
   font-size: 1.75rem;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -107,6 +109,7 @@ body {
 
 /* Panels */
 .panel-title {
+  font-family: var(--font-heading);
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--gray-800);
@@ -311,12 +314,82 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .main-container {
-    padding: var(--spacing-md);
-  }
-
   .form-panel,
   .preview-panel {
     padding: var(--spacing-lg);
   }
+}
+
+/* Settings Section */
+.settings-section {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 2px solid var(--gray-200);
+}
+
+.settings-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--navy-blue);
+  margin-bottom: var(--spacing-md);
+}
+
+.settings-group {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-200);
+}
+
+.settings-subtitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+  gap: var(--spacing-md);
+}
+
+.control-row label {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  flex-shrink: 0;
+  width: 100px;
+}
+
+.control-row input[type="range"] {
+  flex: 1;
+  cursor: pointer;
+}
+
+.control-row input[type="number"],
+.control-row select {
+  flex: 1;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.control-subgroup {
+  margin-top: var(--spacing-md);
+  padding-left: var(--spacing-md);
+  border-left: 2px solid var(--gray-200);
+}
+
+.subgroup-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  margin-bottom: var(--spacing-sm);
+  text-transform: uppercase;
 }
