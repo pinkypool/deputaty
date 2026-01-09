@@ -87,25 +87,30 @@ const photoYInput = document.getElementById('photo-y-input');
 const deputyYInput = document.getElementById('deputy-y-input');
 const deputySizeInput = document.getElementById('deputy-size-input');
 const deputyWeightInput = document.getElementById('deputy-weight-input');
+const deputyFontInput = document.getElementById('deputy-font-input');
 const staticYInput = document.getElementById('static-y-input');
 const staticSizeInput = document.getElementById('static-size-input');
 const staticWeightInput = document.getElementById('static-weight-input');
+const staticFontInput = document.getElementById('static-font-input');
 
 // Responsible Person Inputs
 const respHeaderX = document.getElementById('resp-header-x');
 const respHeaderY = document.getElementById('resp-header-y');
 const respHeaderSize = document.getElementById('resp-header-size');
 const respHeaderWeight = document.getElementById('resp-header-weight');
+const respHeaderFont = document.getElementById('resp-header-font');
 
 const respNameX = document.getElementById('resp-name-x');
 const respNameY = document.getElementById('resp-name-y');
 const respNameSize = document.getElementById('resp-name-size');
 const respNameWeight = document.getElementById('resp-name-weight');
+const respNameFont = document.getElementById('resp-name-font');
 
 const respPhoneX = document.getElementById('resp-phone-x');
 const respPhoneY = document.getElementById('resp-phone-y');
 const respPhoneSize = document.getElementById('resp-phone-size');
 const respPhoneWeight = document.getElementById('resp-phone-weight');
+const respPhoneFont = document.getElementById('resp-phone-font');
 
 // State
 let templateImage = null;
@@ -267,8 +272,9 @@ function renderCard() {
     const staticCfg = OVERLAY_CONFIG.staticText;
     const subtitleFontSize = Math.round(w * (staticCfg.fontSize || 0.022));
     const fontWeight = staticCfg.fontWeight || '400';
+    const fontFamily = staticCfg.fontFamily || '"Montserrat", sans-serif';
     
-    ctx.font = `${fontWeight} ${subtitleFontSize}px Montserrat, sans-serif`;
+    ctx.font = `${fontWeight} ${subtitleFontSize}px ${fontFamily}`;
     ctx.fillStyle = '#FFFFFF';
     ctx.textAlign = 'center'; // Центрируем текст
     ctx.textBaseline = 'top';
@@ -366,15 +372,17 @@ function renderCard() {
 
       // Фамилия (крупнее, жирнее) - используем выбранный вес или 700
       const weight = nameConfig.fontWeight || '700';
-      ctx.font = `${weight} ${fontSize}px "Playfair Display", serif`;
+      const font = nameConfig.fontFamily || '"Playfair Display", serif';
+      ctx.font = `${weight} ${fontSize}px ${font}`;
       ctx.fillText(lastName, photoCenterX, nameY);
 
       // Имя Отчество (чуть меньше)
-      ctx.font = `500 ${Math.round(fontSize * 0.7)}px "Playfair Display", serif`;
+      ctx.font = `500 ${Math.round(fontSize * 0.7)}px ${font}`;
       ctx.fillText(firstName, photoCenterX, nameY + fontSize * 1.2);
     } else {
       const weight = nameConfig.fontWeight || '700';
-      ctx.font = `${weight} ${fontSize}px "Playfair Display", serif`;
+      const font = nameConfig.fontFamily || '"Playfair Display", serif';
+      ctx.font = `${weight} ${fontSize}px ${font}`;
       ctx.fillText(deputyName, photoCenterX, nameY);
     }
   }
@@ -382,7 +390,8 @@ function renderCard() {
   // 4. Draw responsible person header (статичный темно-синий)
   const hConfig = CONFIG.responsible.header;
   const headerFontSize = Math.round(w * hConfig.fontSize);
-  ctx.font = `${hConfig.fontWeight} ${headerFontSize}px Montserrat, sans-serif`;
+  const hFont = hConfig.fontFamily || '"Montserrat", sans-serif';
+  ctx.font = `${hConfig.fontWeight} ${headerFontSize}px ${hFont}`;
   ctx.fillStyle = '#002855';  // Темно-синий статичный
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
@@ -395,8 +404,9 @@ function renderCard() {
   if (responsibleName) {
     const rConfig = CONFIG.responsible.name;
     const fontSize = Math.round(w * rConfig.fontSize);
+    const rFont = rConfig.fontFamily || '"Montserrat", sans-serif';
 
-    ctx.font = `${rConfig.fontWeight} ${fontSize}px Montserrat, sans-serif`;
+    ctx.font = `${rConfig.fontWeight} ${fontSize}px ${rFont}`;
     ctx.fillStyle = isRespPlaceholder ? 'rgba(255, 255, 255, 0.5)' : rConfig.color;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
@@ -414,7 +424,8 @@ function renderCard() {
     const phoneY = h * pConfig.y;
 
     // Текст номера
-    ctx.font = `${pConfig.fontWeight || '500'} ${fontSize}px Montserrat, sans-serif`;
+    const pFont = pConfig.fontFamily || '"Montserrat", sans-serif';
+    ctx.font = `${pConfig.fontWeight || '500'} ${fontSize}px ${pFont}`;
     ctx.fillStyle = isPhonePlaceholder ? 'rgba(255, 255, 255, 0.5)' : pConfig.color;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
@@ -740,8 +751,18 @@ async function init() {
       renderCard();
     });
 
+    deputyFontInput.addEventListener('change', (e) => {
+      CONFIG.deputyName.fontFamily = e.target.value;
+      renderCard();
+    });
+
     staticWeightInput.addEventListener('change', (e) => {
       OVERLAY_CONFIG.staticText.fontWeight = e.target.value;
+      renderCard();
+    });
+
+    staticFontInput.addEventListener('change', (e) => {
+      OVERLAY_CONFIG.staticText.fontFamily = e.target.value;
       renderCard();
     });
 
@@ -750,18 +771,21 @@ async function init() {
     respHeaderY.addEventListener('input', (e) => { CONFIG.responsible.header.y = parseFloat(e.target.value); renderCard(); });
     respHeaderSize.addEventListener('input', (e) => { CONFIG.responsible.header.fontSize = parseFloat(e.target.value); renderCard(); });
     respHeaderWeight.addEventListener('change', (e) => { CONFIG.responsible.header.fontWeight = e.target.value; renderCard(); });
+    respHeaderFont.addEventListener('change', (e) => { CONFIG.responsible.header.fontFamily = e.target.value; renderCard(); });
 
     // Responsible Name Controls
     respNameX.addEventListener('input', (e) => { CONFIG.responsible.name.x = parseFloat(e.target.value); renderCard(); });
     respNameY.addEventListener('input', (e) => { CONFIG.responsible.name.y = parseFloat(e.target.value); renderCard(); });
     respNameSize.addEventListener('input', (e) => { CONFIG.responsible.name.fontSize = parseFloat(e.target.value); renderCard(); });
     respNameWeight.addEventListener('change', (e) => { CONFIG.responsible.name.fontWeight = e.target.value; renderCard(); });
+    respNameFont.addEventListener('change', (e) => { CONFIG.responsible.name.fontFamily = e.target.value; renderCard(); });
 
     // Responsible Phone Controls
     respPhoneX.addEventListener('input', (e) => { CONFIG.responsible.phone.x = parseFloat(e.target.value); renderCard(); });
     respPhoneY.addEventListener('input', (e) => { CONFIG.responsible.phone.y = parseFloat(e.target.value); renderCard(); });
     respPhoneSize.addEventListener('input', (e) => { CONFIG.responsible.phone.fontSize = parseFloat(e.target.value); renderCard(); });
     respPhoneWeight.addEventListener('change', (e) => { CONFIG.responsible.phone.fontWeight = e.target.value; renderCard(); });
+    respPhoneFont.addEventListener('change', (e) => { CONFIG.responsible.phone.fontFamily = e.target.value; renderCard(); });
 
     // Download button
     downloadBtn.addEventListener('click', exportToPDF);
